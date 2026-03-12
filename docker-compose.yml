@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # 1. mongo (Database first)
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. backend (Python API)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bank_app
+      - SECRET_KEY=supersecretkey
+    depends_on:
+      - mongo
+
+  # 3. transactions (JS Microservice)
+  transactions:
+    build: ./transactions
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/bank_app
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+
+  # 4. frontend (Student Portfolio UI)
+  studentportfolio:
+    build: ./studentportfolio
+    # No ports needed here because teacher's Nginx serves files directly
+
+  # 5. nginx (Entry Gateway)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      # Mount config file exactly as teacher specified
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # Mount HTML files directly to Nginx so it can serve them
+      - ./studentportfolio:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+      - transactions
+      - studentportfolio
+
+volumes:
+  mongo_data:
