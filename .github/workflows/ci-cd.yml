@@ -1,0 +1,64 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_OWNER: ${{ github.repository_owner }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 1. Check out the main repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Log in to GitHub Container Registry (GHCR)
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      # 3. Build and push microservices (Tagged with the unique commit SHA)
+      - name: Build & Push Backend
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/backend:${{ github.sha }} ./backend
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/backend:${{ github.sha }}
+
+      - name: Build & Push Transactions
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/transactions:${{ github.sha }} ./transactions
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/transactions:${{ github.sha }}
+
+      - name: Build & Push Syncer
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/syncer:${{ github.sha }} ./syncer
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/syncer:${{ github.sha }}
+
+      - name: Build & Push StudentPortfolio
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/studentportfolio:${{ github.sha }} ./studentportfolio
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/studentportfolio:${{ github.sha }}
+
+      # 4. Check out the GitOps repository
+      - name: Checkout GitOps Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops-repo
+
+      # 5. Update image tags in K8s manifests and auto-commit
+      - name: Update tags and push
+        run: |
+          cd gitops-repo/k8s
