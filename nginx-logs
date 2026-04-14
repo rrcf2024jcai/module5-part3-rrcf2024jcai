@@ -1,0 +1,64 @@
+[
+    {
+        "Id": "sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0",
+        "RepoTags": [
+            "nginx:alpine"
+        ],
+        "RepoDigests": [
+            "nginx@sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0"
+        ],
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-03-10T22:36:23.243299622Z",
+        "Config": {
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.29.6",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.9.6",
+                "NJS_RELEASE=1",
+                "ACME_VERSION=0.3.1"
+            ],
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "WorkingDir": "/",
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 26011117,
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:989e799e634906e94dc9a5ee2ee26fc92ad260522990f26e707861a5f52bf64e",
+                "sha256:5bb518009c83d498f71263ffc016f9f447251adbd2529289ead569af6f8e70e6",
+                "sha256:ea6528e5378341e48a761c0bac1ad6c3974d87fb870aaba005c4cd50817dbdff",
+                "sha256:09c3b60a3926ba8b1f23fddac881831a17ed7e803aee91e59c86f25f131e87c5",
+                "sha256:e0fe744d26d4e1c18fc24961038c30992ebc3399f9b3d7f136fad15d6db08db4",
+                "sha256:04297a721e7f464d1c7e35294c019010fd7fd20ec1b3891ee207e7dd39c4fcff",
+                "sha256:5693fac86db4876970e0bbdd63d9b50ed650051457225e9377d8b72a35aba7bd",
+                "sha256:d408059e7553020f3caf3f88b3d1f012c7a0528299b077a5b8ee2ea70e29f109"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-03-12T03:29:21.020998962Z"
+        },
+        "Descriptor": {
+            "mediaType": "application/vnd.oci.image.index.v1+json",
+            "digest": "sha256:f46cb72c7df02710e693e863a983ac42f6a9579058a59a35f1ae36c9958e4ce0",
+            "size": 10333
+        }
+    }
+]
